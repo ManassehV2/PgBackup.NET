@@ -15,11 +15,7 @@ dotnet add package PgBackup.Net --version 1.0.0
 # Package usage
 ## 1. Register the service in Startup.cs or Program.cs file
 ```
-services.AddPgBackupServices()
-var converter = new HtmlConverter();
-var html = "<div><strong>Hello</strong> World!</div>";
-var bytes = converter.FromHtmlString(html);
-File.WriteAllBytes("image.jpg", bytes);
+services.AddPgBackupServices();
 ```
 ## 2. call the BackupDB method with path string(the storage location of the backup tar file) 
 ```
