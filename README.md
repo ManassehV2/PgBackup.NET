@@ -1,7 +1,8 @@
 
 # PostgreSQL backup
 
-This is package can be used to take postgres database backups on demand from your .NEt core or .Net framework application
+This is package can be used to take postgres database backups on demand from your .NEt core or .Net framework applications.
+Please refer https://www.postgresql.org/docs/9.3/libpq-pgpass.html for seting .pgpass file for the package to use for aauthenticating to the database server, 
 
 ## Installation Instructions
 Nuget package available (https://www.nuget.org/packages/PgBackup.Net/1.0.0)
