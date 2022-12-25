@@ -11,7 +11,7 @@ Install-Package PgBackup.Net -Version 1.0.0
 ```
 dotnet cli:
 ```
-dotnet add package PgBackup.Net --version 1.0.0
+dotnet add package PgBackup.Net --version=1.0.0
 ```
 # Package usage
 ## 1. Register the service in Startup.cs or Program.cs file
