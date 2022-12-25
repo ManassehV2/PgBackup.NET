@@ -1,8 +1,5 @@
 name: "Deploy to nuget"
-on:
-  push:
-    branches:
-      - "master"
+on: ["push"]
 env:
   PROJECT_PATH: "PgBackup.csproj"
   PACK_OUTPUT_DIR: ${{ github.workspace }}\output
