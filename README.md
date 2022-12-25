@@ -1,30 +1,38 @@
-
 # PostgreSQL backup
 
-This package is a simple wrapper of postgresql's pg_dump client tool and can be used to take postgres database backups on demand from your .NET core or .NET framework applications.
-Please refer https://www.postgresql.org/docs/current/libpq-pgpass.html for setting up the .pgpass file for the package to use to authentication to the database server, 
+This package is a simple wrapper of postgresql's pg_dump client tool and can be used to take postgres database backups on demand from a .NET core application.
+Please refer https://www.postgresql.org/docs/current/libpq-pgpass.html for setting up the .pgpass file for the package to use to authentication to the database server,
 
 ## Installation Instructions
+
 Nuget package available (https://www.nuget.org/packages/PgBackup.Net/1.0.0)
+
 ```
 Install-Package PgBackup.Net -Version 1.0.0
 ```
+
 dotnet cli:
+
 ```
 dotnet add package PgBackup.Net --version=1.0.0
 ```
+
 # Package usage
+
 ## 1. Register the service in Startup.cs or Program.cs file
+
 ```
 services.AddPgBackupServices();
 ```
-## 2. call the BackupDB method with path string(the storage location of the backup tar file) 
+
+## 2. call the BackupDB method with path string(the storage location of the backup tar file)
+
 ```
 using PgBackup.Services;
 public class myClass
 {
   private readonly IPgDumpService _pgDumpService;
-  
+
   public myClass(IPgDumpService pgDumpService)
   {
     _pgDumpService = pgDumpService;

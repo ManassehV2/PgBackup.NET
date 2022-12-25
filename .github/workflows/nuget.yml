@@ -1,0 +1,28 @@
+name: "Deploy to nuget"
+on:
+  push:
+    branches:
+      - "master"
+env:
+  PROJECT_PATH: "PgBackup.csproj"
+  PACK_OUTPUT_DIR: ${{ github.workspace }}\output
+  NUGET_SOURCE_URL: https://www.nuget.org/packages/PgBackup.Net/1.0.0
+jobs:
+  deploy:
+    name: "deploy"
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v3
+      - name: "Install dotnet standard"
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: "6.0"
+      - name: "Restore Packages"
+        run: dotnet restore ${{ env.PROJECT_PATH }}
+      - name: "Build Project"
+        run: dotnet build ${{ env.PROJECT_PATH }} --no-restore --configuration Release
+      - name: "Pack Project"
+        run: dotnet pack ${{ env.PROJECT_PATH }} --no-restore --no-build --configuration Release --include-symbols --output ${{ env.PACK_OUTPUT_DIR }}
+      - name: "Push Package"
+        run: dotnet nuget push ${{ env.PACK_OUTPUT_DIR }}\*.nupkg -k ${{ secrets.NUGET_AUTH_TOKEN }} -s ${{ env.NUGET_SOURCE_URL }}
