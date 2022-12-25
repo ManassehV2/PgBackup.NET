@@ -22,4 +22,4 @@ jobs:
       - name: "Pack Project"
         run: dotnet pack ${{ env.PROJECT_PATH }} --no-restore --no-build --configuration Release --include-symbols --output ${{ env.PACK_OUTPUT_DIR }}
       - name: "Push Package"
-        run: dotnet nuget push ${{ env.PACK_OUTPUT_DIR }}\*.nupkg -k ${{ secrets.NUGET_AUTH_TOKEN }} -s ${{ env.NUGET_SOURCE_URL }}
+        run: dotnet nuget push ${{ env.PACK_OUTPUT_DIR }}\PgBackup.Net.1.0.0.nupkg -k ${{ secrets.NUGET_AUTH_TOKEN }} -s ${{ env.NUGET_SOURCE_URL }}
