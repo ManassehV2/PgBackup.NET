@@ -26,6 +26,6 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: PgBackup.NET
-        path: ./ManassehV2/PgBackup.NET/bin/Release/PgBackup.NET.${{ github.event.release.tag_name }}.nupkg
+        path: ${{ github.workspace }}/bin/Release/PgBackup.NET.${{ github.event.release.tag_name }}.nupkg
     - name: Publish Nuget Package
       run: dotnet nuget push **/*.nupkg --api-key ${{ secrets.NUGET_AUTH_TOKEN }} --source https://api.nuget.org/v3/index.json --no-symbols true
