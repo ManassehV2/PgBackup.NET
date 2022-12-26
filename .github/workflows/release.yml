@@ -22,6 +22,6 @@ jobs:
       - name: "Build Project"
         run: dotnet build ${{ env.PROJECT_PATH }} --no-restore --configuration Release
       - name: "Pack Project"
-        run: dotnet pack ${{ env.PROJECT_PATH }} --no-restore --no-build --configuration Release --include-symbols --output ${{ env.PACK_OUTPUT_DIR }}
+        run: dotnet pack ${{ env.PROJECT_PATH }} /p:Version=${{ github.event.release.tag_name }} /p:PackageReleaseNotes="See https://github.com/ManassehV2/PgBackup.NET/releases/tag/${{ github.event.release.tag_name }}" --no-restore --no-build --configuration Release  --output ${{ env.PACK_OUTPUT_DIR }}
       - name: "Push Package"
         run: dotnet nuget push ${{ env.PACK_OUTPUT_DIR }}\*.nupkg -k ${{ secrets.NUGET_AUTH_TOKEN }} -s ${{ env.NUGET_SOURCE_URL }}
