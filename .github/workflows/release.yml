@@ -1,33 +1,27 @@
-# This workflow will build a .NET project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
-
-name: Relese to NuGet
-
+name: "Deploy to nuget"
 on:
   release:
-   types: [published]
+    types: [published]
 env:
   PROJECT_PATH: "PgBackup.csproj"
-  PACK_OUTPUT_DIR: "./"
-  NUGET_SOURCE_URL: "https://www.api.nuget.org/v3/index.json"
-
+  PACK_OUTPUT_DIR: ${{ github.workspace }}
+  NUGET_SOURCE_URL: https://www.api.nuget.org/v3/index.json
 jobs:
-  build:
-
-    runs-on: ubuntu-latest
-
+  deploy:
+    name: "deploy"
+    runs-on: "ubuntu-latest"
     steps:
-    - uses: actions/checkout@v3
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 6.0.x
-    - name: Create NuGet Package
-      run: dotnet pack  ${{ env.PROJECT_PATH }} -c Release /p:Version=${{ github.event.release.tag_name }} /p:PackageReleaseNotes="See https://github.com/ManassehV2/PgBackup.NET/releases/tag/${{ github.event.release.tag_name }}" --output ${{ env.PACK_OUTPUT_DIR }}
-    - name: Archive NuGet Package
-      uses: actions/upload-artifact@v3
-      with:
-        name: PgBackup.NET
-        path: ./PgBackup.NET.${{ github.event.release.tag_name }}.nupkg
-    - name: Publish Nuget Package
-      run: dotnet nuget push **/*.nupkg --api-key ${{ secrets.NUGET_AUTH_TOKEN }} --source https://api.nuget.org/v3/index.json --no-symbols true
+      - name: "Checkout"
+        uses: actions/checkout@v3
+      - name: "Install dotnet standard"
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: "6.0"
+      - name: "Restore Packages"
+        run: dotnet restore ${{ env.PROJECT_PATH }}
+      - name: "Build Project"
+        run: dotnet build ${{ env.PROJECT_PATH }} --no-restore --configuration Release
+      - name: "Pack Project"
+        run: dotnet pack ${{ env.PROJECT_PATH }} --no-restore --no-build --configuration Release --include-symbols --output ${{ env.PACK_OUTPUT_DIR }}
+      - name: "Push Package"
+        run: dotnet nuget push ${{ env.PACK_OUTPUT_DIR }}\*.nupkg -k ${{ secrets.NUGET_AUTH_TOKEN }} -s ${{ env.NUGET_SOURCE_URL }}
