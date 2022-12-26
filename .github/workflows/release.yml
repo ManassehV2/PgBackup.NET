@@ -8,8 +8,8 @@ on:
    types: [published]
 env:
   PROJECT_PATH: "PgBackup.csproj"
-  PACK_OUTPUT_DIR: ${{ github.workspace }}
-  NUGET_SOURCE_URL: https://www.api.nuget.org/v3/index.json
+  PACK_OUTPUT_DIR: "./"
+  NUGET_SOURCE_URL: "https://www.api.nuget.org/v3/index.json"
 
 jobs:
   build:
@@ -28,6 +28,6 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: PgBackup.NET
-        path: ${{ github.workspace }}/bin/Release/PgBackup.NET.${{ github.event.release.tag_name }}.nupkg
+        path: ./PgBackup.NET.${{ github.event.release.tag_name }}.nupkg
     - name: Publish Nuget Package
       run: dotnet nuget push **/*.nupkg --api-key ${{ secrets.NUGET_AUTH_TOKEN }} --source https://api.nuget.org/v3/index.json --no-symbols true
