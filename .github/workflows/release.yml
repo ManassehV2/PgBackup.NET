@@ -1,0 +1,31 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: Relese to NuGet
+
+on:
+  release:
+   types: [published]
+    
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 6.0.x
+    - name: Create NuGet Package
+      run: dotnet pack -c Release /p:Version=${{ github.event.release.tag_name }} /p:PackageReleaseNotes="See https://github.com/ManassehV2/PgBackup.NET/releases/tag/${{ github.event.release.tag_name }}"
+      working-directory: ./ManassehV2/PgBackup.NET
+    - name: Archive NuGet Package
+      uses: actions/upload-artifact@v3
+      with:
+        name: PgBackup.NET
+        path: ./ManassehV2/PgBackup.NET/bin/Release/PgBackup.NET.${{ github.event.release.tag_name }}.nupkg
+    - name: Publish Nuget Package
+      run: dotnet nuget push **/*.nupkg --api-key ${{ secrets.NUGET_AUTH_TOKEN }} --source https://api.nuget.org/v3/index.json --no-symbols true
