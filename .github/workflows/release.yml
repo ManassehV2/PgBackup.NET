@@ -21,7 +21,7 @@ jobs:
         dotnet-version: 6.0.x
     - name: Create NuGet Package
       run: dotnet pack -c Release /p:Version=${{ github.event.release.tag_name }} /p:PackageReleaseNotes="See https://github.com/ManassehV2/PgBackup.NET/releases/tag/${{ github.event.release.tag_name }}"
-      working-directory: ./ManassehV2/PgBackup.NET
+      working-directory: ${{ github.workspace }}
     - name: Archive NuGet Package
       uses: actions/upload-artifact@v3
       with:
