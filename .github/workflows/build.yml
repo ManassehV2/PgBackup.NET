@@ -10,7 +10,7 @@ jobs:
     name: Build and analyze
     runs-on: windows-latest
     steps:
-     - name: Build
+      - name: Build
         run: |
          dotnet tool install --global dotnet-coverage
       - name: Set up JDK 11
