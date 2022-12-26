@@ -5,7 +5,7 @@ on:
 env:
   PROJECT_PATH: "PgBackup.csproj"
   PACK_OUTPUT_DIR: ${{ github.workspace }}
-  NUGET_SOURCE_URL: https://www.api.nuget.org/v3/index.json
+  NUGET_SOURCE_URL: https://api.nuget.org/v3/index.json
 jobs:
   deploy:
     name: "deploy"
