@@ -6,7 +6,10 @@ name: Relese to NuGet
 on:
   release:
    types: [published]
-    
+env:
+  PROJECT_PATH: "PgBackup.csproj"
+  PACK_OUTPUT_DIR: ${{ github.workspace }}
+  NUGET_SOURCE_URL: https://www.api.nuget.org/v3/index.json
 
 jobs:
   build:
@@ -20,7 +23,7 @@ jobs:
       with:
         dotnet-version: 6.0.x
     - name: Create NuGet Package
-      run: dotnet pack -c Release /p:Version=${{ github.event.release.tag_name }} /p:PackageReleaseNotes="See https://github.com/ManassehV2/PgBackup.NET/releases/tag/${{ github.event.release.tag_name }}" --output ${{ github.workspace }}
+      run: dotnet pack  ${{ env.PROJECT_PATH }} -c Release /p:Version=${{ github.event.release.tag_name }} /p:PackageReleaseNotes="See https://github.com/ManassehV2/PgBackup.NET/releases/tag/${{ github.event.release.tag_name }}" --output ${{ env.PACK_OUTPUT_DIR }}
     - name: Archive NuGet Package
       uses: actions/upload-artifact@v3
       with:
