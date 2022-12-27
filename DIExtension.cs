@@ -8,6 +8,7 @@ namespace PgBackup
             this IServiceCollection services)
         {
             services.AddScoped<IPgDumpService, PgDumpService>();
+            services.AddScoped<IPgRestoreService, PgRestoreService>();
 
             return services;
         }

@@ -1,41 +1,40 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection;
 using Microsoft.Extensions.Logging;
+using PgBackup.Enums;
+using PgBackup.Exceptions;
 namespace PgBackup.Services
 {
     public interface IPgDumpService
     {
-        void BackupDB(string backupDir);
+        void BackupDB(string dbName, string backupDir, BackupFileFormat format = BackupFileFormat.Plain);
+        byte[] BackupDB(string dbName, BackupFileFormat format = BackupFileFormat.Plain);
 
     }
-    public class PgDumpService : IPgDumpService
+    internal class PgDumpService : IPgDumpService
     {
         private readonly ILogger<PgDumpService> _logger;
-        private static string directory;
-        private static string toolFilepath;
-
         public PgDumpService(ILogger<PgDumpService> logger)
         {
             _logger = logger;
         }
-        public void BackupDB(string backupDir)
+        public void BackupDB(string dbName, string backupDir, BackupFileFormat format = BackupFileFormat.Plain)
         {
             _logger.LogInformation("(PgDumpService)Entered In BackupDB Method.");
-            GetToolFilePath("pg_dump");
+            var toolFilepath = PgCommonService.GetToolFilePath("pg_dump");
+            var (fileExt, cliOpt) = PgCommonService.GetFileExtension(format);
+            string filename = Path.Combine(backupDir, Guid.NewGuid().ToString() + fileExt);
+            string args = $"-{cliOpt} --blobs -d {dbName} --no-password -f \"{filename.Trim()}\"";
             try
             {
-                string filename = Path.Combine(backupDir, Guid.NewGuid().ToString() + ".tar");
-                string args = $"-Ft --blobs --no-password -f \"{filename.Trim()}\"";
-
                 _logger.LogInformation("PgDumpService Executing CLI command: {0} {1}", toolFilepath, args);
                 Process process = Process.Start(new ProcessStartInfo(toolFilepath, args)
                 {
                     WindowStyle = ProcessWindowStyle.Maximized,
                     CreateNoWindow = false,
                     UseShellExecute = false,
-                    WorkingDirectory = directory,
+                    WorkingDirectory = PgCommonService._directory,
                     RedirectStandardError = false,
                     RedirectStandardOutput = false
 
@@ -44,84 +43,37 @@ namespace PgBackup.Services
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message, ex);
+                throw new InvalidInputParameterException(ex.Message, args, ex);
             }
         }
 
-        private static void GetToolFilePath(string toolName)
+        public byte[] BackupDB(string dbName, BackupFileFormat format = BackupFileFormat.Plain)
         {
-            directory = AppContext.BaseDirectory;
+            _logger.LogInformation("(PgDumpService)Entered In BackupDB Method.");
+            var toolFilepath = PgCommonService.GetToolFilePath("pg_dump");
+            var (fileExt, cliOpt) = PgCommonService.GetFileExtension(format);
+            string filename = Path.Combine(PgCommonService._directory, Guid.NewGuid().ToString() + fileExt);
+            string args = $"-{cliOpt} --blobs -d {dbName} --no-password -f \"{filename}\"";
 
-            //Check on what platform we are
-            if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
+            _logger.LogInformation("PgDumpService Executing CLI command: {0} {1}", toolFilepath, args);
+            Process process = Process.Start(new ProcessStartInfo(toolFilepath, args)
             {
-                toolFilepath = Path.Combine(directory, toolName + ".exe");
+                WindowStyle = ProcessWindowStyle.Maximized,
+                CreateNoWindow = false,
+                UseShellExecute = false,
+                WorkingDirectory = PgCommonService._directory,
+                RedirectStandardError = false,
+                RedirectStandardOutput = false
 
-                if (!File.Exists(toolFilepath))
-                {
-                    var assembly = typeof(PgDumpService).GetTypeInfo().Assembly;
-                    var type = typeof(PgDumpService);
-                    var ns = type.Namespace;
-
-                    using (var resourceStream = assembly.GetManifestResourceStream($"{ns}.{toolName}.exe"))
-                    using (var fileStream = File.OpenWrite(toolFilepath))
-                    {
-                        resourceStream.CopyTo(fileStream);
-                    }
-                }
-            }
-            else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
+            });
+            process.WaitForExit();
+            if (File.Exists(filename))
             {
-                //Check if wkhtmltoimage package is installed in using which command
-                Process process = Process.Start(new ProcessStartInfo()
-                {
-                    CreateNoWindow = true,
-                    UseShellExecute = false,
-                    WorkingDirectory = "/usr/local/bin",
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    FileName = "which",
-                    Arguments = toolName
-
-                });
-                string answer = process.StandardOutput.ReadToEnd();
-                process.WaitForExit();
-
-                if (!string.IsNullOrEmpty(answer) && answer.Contains(toolName))
-                {
-                    toolFilepath = toolName;
-                }
-                else
-                {
-                    throw new Exception("PostgrSQL client tool pg_dump does not appear to be installed on this linux system according to which command");
-                }
+                var bytes = File.ReadAllBytes(filename);
+                File.Delete(filename);
+                return bytes;
             }
-            else
-            {
-                //Check if pg_dump  is installed on this distro of MacOS using which command
-                Process process = Process.Start(new ProcessStartInfo()
-                {
-                    CreateNoWindow = true,
-                    UseShellExecute = false,
-                    WorkingDirectory = "/usr/local/bin",
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    FileName = "which",
-                    Arguments = toolName
-
-                });
-                string answer = process.StandardOutput.ReadToEnd();
-                process.WaitForExit();
-
-                if (!string.IsNullOrEmpty(answer) && answer.Contains("pg_dump"))
-                {
-                    toolFilepath = toolName;
-                }
-                else
-                {
-                    throw new Exception("PostgrSQL client tool pg_dump does not appear to be installed on this linux system according to which command");
-                }
-            }
+            throw new InvalidInputParameterException($"An error occurs excuting the comand {toolFilepath}", args);
         }
     }
 }
