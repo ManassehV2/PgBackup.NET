@@ -31,7 +31,10 @@ public class myClass
   }
   public void TakeBackUp()
   {
+    // option 1. to output backup file will be stored in the specified path
     _pgDumpService.BackupDB("dbName", "/Users/Documents/", BackupFileFormat format); //Default is Plain(.sql file)
+    
+    //option 2. to get the byte array of the backup file
     byte[] result = _pgDumpService.BackupDB("dbName", BackupFileFormat format); //Default is Plain(.sql file)
   }
 }
