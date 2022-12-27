@@ -4,7 +4,6 @@ namespace PgBackup.Enums
     {
         Plain = 1,
         Tar,
-        Directory,
         Custom
 
     }
