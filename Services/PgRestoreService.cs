@@ -5,7 +5,7 @@ namespace PgBackup.Services
         bool RestoreFromeFile(string filePath);
 
     }
-    internal class PgRestoreService : PgCommonService, IPgRestoreService
+    internal class PgRestoreService : IPgRestoreService
     {
         public bool RestoreFromeFile(string filePath)
         {

@@ -12,9 +12,10 @@ namespace PgBackup.Services
         byte[] BackupDB(string dbName, BackupFileFormat format = BackupFileFormat.Plain);
 
     }
-    internal class PgDumpService : PgCommonService, IPgDumpService
+    internal class PgDumpService : IPgDumpService
     {
         private readonly ILogger<PgDumpService> _logger;
+        //private readonly PgCommonService _pgBackupCommonService;
 
         public PgDumpService(ILogger<PgDumpService> logger)
         {
@@ -23,19 +24,19 @@ namespace PgBackup.Services
         public void BackupDB(string dbName, string backupDir, BackupFileFormat format = BackupFileFormat.Plain)
         {
             _logger.LogInformation("(PgDumpService)Entered In BackupDB Method.");
-            GetToolFilePath("pg_dump");
-            var (fileExt, cliOpt) = GetFileExtension(format);
+            PgCommonService.GetToolFilePath("pg_dump");
+            var (fileExt, cliOpt) = PgCommonService.GetFileExtension(format);
             string filename = Path.Combine(backupDir, Guid.NewGuid().ToString() + fileExt);
             string args = $"-{cliOpt} --blobs -d {dbName} --no-password -f \"{filename.Trim()}\"";
             try
             {
-                _logger.LogInformation("PgDumpService Executing CLI command: {0} {1}", _toolFilepath, args);
-                Process process = Process.Start(new ProcessStartInfo(_toolFilepath, args)
+                _logger.LogInformation("PgDumpService Executing CLI command: {0} {1}", PgCommonService._toolFilepath, args);
+                Process process = Process.Start(new ProcessStartInfo(PgCommonService._toolFilepath, args)
                 {
                     WindowStyle = ProcessWindowStyle.Maximized,
                     CreateNoWindow = false,
                     UseShellExecute = false,
-                    WorkingDirectory = _directory,
+                    WorkingDirectory = PgCommonService._directory,
                     RedirectStandardError = false,
                     RedirectStandardOutput = false
 
@@ -51,18 +52,18 @@ namespace PgBackup.Services
         public byte[] BackupDB(string dbName, BackupFileFormat format = BackupFileFormat.Plain)
         {
             _logger.LogInformation("(PgDumpService)Entered In BackupDB Method.");
-            GetToolFilePath("pg_dump");
-            var (fileExt, cliOpt) = GetFileExtension(format);
-            string filename = Path.Combine(_directory, Guid.NewGuid().ToString() + fileExt);
+            PgCommonService.GetToolFilePath("pg_dump");
+            var (fileExt, cliOpt) = PgCommonService.GetFileExtension(format);
+            string filename = Path.Combine(PgCommonService._directory, Guid.NewGuid().ToString() + fileExt);
             string args = $"-{cliOpt} --blobs -d {dbName} --no-password -f \"{filename}\"";
 
-            _logger.LogInformation("PgDumpService Executing CLI command: {0} {1}", _toolFilepath, args);
-            Process process = Process.Start(new ProcessStartInfo(_toolFilepath, args)
+            _logger.LogInformation("PgDumpService Executing CLI command: {0} {1}", PgCommonService._toolFilepath, args);
+            Process process = Process.Start(new ProcessStartInfo(PgCommonService._toolFilepath, args)
             {
                 WindowStyle = ProcessWindowStyle.Maximized,
                 CreateNoWindow = false,
                 UseShellExecute = false,
-                WorkingDirectory = _directory,
+                WorkingDirectory = PgCommonService._directory,
                 RedirectStandardError = false,
                 RedirectStandardOutput = false
 
@@ -74,7 +75,7 @@ namespace PgBackup.Services
                 File.Delete(filename);
                 return bytes;
             }
-            throw new InvalidInputParameterException($"An error occurs excuting the comand {_toolFilepath}", args);
+            throw new InvalidInputParameterException($"An error occurs excuting the comand {PgCommonService._toolFilepath}", args);
         }
     }
 }

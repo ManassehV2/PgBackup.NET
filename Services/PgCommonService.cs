@@ -7,12 +7,12 @@ using PgBackup.Exceptions;
 
 namespace PgBackup.Services
 {
-    internal class PgCommonService
+    internal static class PgCommonService
     {
-        protected static string _directory;
-        protected static string _toolFilepath;
+        public static string _directory;
+        public static string _toolFilepath;
 
-        protected static void GetToolFilePath(string toolName)
+        public static void GetToolFilePath(string toolName)
         {
             _directory = AppContext.BaseDirectory;
 
@@ -87,7 +87,7 @@ namespace PgBackup.Services
                 }
             }
         }
-        protected static (string, string) GetFileExtension(BackupFileFormat format)
+        public static (string, string) GetFileExtension(BackupFileFormat format)
         {
             switch (format)
             {
