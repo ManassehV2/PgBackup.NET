@@ -9,34 +9,32 @@ namespace PgBackup.Services
 {
     internal static class PgCommonService
     {
-        public static string _directory;
-        public static string _toolFilepath;
+        public static readonly string _directory = AppContext.BaseDirectory;
 
-        public static void GetToolFilePath(string toolName)
+        public static string GetToolFilePath(string toolName)
         {
-            _directory = AppContext.BaseDirectory;
-
             //Check on what platform we are
             if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
             {
-                _toolFilepath = Path.Combine(_directory, toolName + ".exe");
+                var toolFilepath = Path.Combine(_directory, toolName + ".exe");
 
-                if (!File.Exists(_toolFilepath))
+                if (!File.Exists(toolFilepath))
                 {
                     var assembly = typeof(PgDumpService).GetTypeInfo().Assembly;
                     var type = typeof(PgDumpService);
                     var ns = type.Namespace;
 
                     using (var resourceStream = assembly.GetManifestResourceStream($"{ns}.{toolName}.exe"))
-                    using (var fileStream = File.OpenWrite(_toolFilepath))
+                    using (var fileStream = File.OpenWrite(toolFilepath))
                     {
                         resourceStream.CopyTo(fileStream);
                     }
                 }
+                return toolFilepath;
             }
             else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
             {
-                //Check if wkhtmltoimage package is installed in using which command
+                //Check if pg_dump package is installed in using which command
                 Process process = Process.Start(new ProcessStartInfo()
                 {
                     CreateNoWindow = true,
@@ -53,7 +51,7 @@ namespace PgBackup.Services
 
                 if (!string.IsNullOrEmpty(answer) && answer.Contains(toolName))
                 {
-                    _toolFilepath = toolName;
+                    return toolName;
                 }
                 else
                 {
@@ -79,7 +77,7 @@ namespace PgBackup.Services
 
                 if (!string.IsNullOrEmpty(answer) && answer.Contains("pg_dump"))
                 {
-                    _toolFilepath = toolName;
+                    return toolName;
                 }
                 else
                 {
