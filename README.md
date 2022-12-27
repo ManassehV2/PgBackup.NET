@@ -1,14 +1,11 @@
 
 # PostgreSQL backup
 
-This package is a simple wrapper of postgresql's pg_dump client tool and can be used to take postgres database backups on demand from your .NET core or .NET framework applications.
-Please refer https://www.postgresql.org/docs/current/libpq-pgpass.html for setting up the .pgpass file for the package to use to authentication to the database server, 
+This package is a simple wrapper of postgresql's pg_dump client tool and can be used to take postgres database backups on demand from .NET core applications.
+Please refer https://www.postgresql.org/docs/current/libpq-pgpass.html for setting up the .pgpass file for the package to use for authentication to the database server.
 
 ## Installation Instructions
-Nuget package available (https://www.nuget.org/packages/PgBackup.Net/1.0.0)
-```
-Install-Package PgBackup.Net -Version 1.1.0
-```
+Nuget package available (https://www.nuget.org/packages/PgBackup.Net/1.1.0)
 dotnet cli:
 ```
 dotnet add package PgBackup.Net --version=1.1.0
@@ -18,9 +15,10 @@ dotnet add package PgBackup.Net --version=1.1.0
 ```
 services.AddPgBackupServices();
 ```
-## 2. call the BackupDB method with path string(the storage location of the backup file) 
+## 2. call the BackupDB method of the PgBackupService
 ```
 using PgBackup.Services;
+using PgBackup.Enums;
 public class myClass
 {
   private readonly IPgDumpService _pgDumpService;
@@ -31,11 +29,11 @@ public class myClass
   }
   public void TakeBackUp()
   {
-    // option 1. to output backup file will be stored in the specified path
-    _pgDumpService.BackupDB("dbName", "/Users/Documents/", BackupFileFormat format); //Default is Plain(.sql file)
+    // option 1. the output backup file will be stored in the specified path
+    _pgDumpService.BackupDB("dbName", "/Users/Documents/", BackupFileFormat.Tar); //Default output format is Plain(.sql file)
     
     //option 2. to get the byte array of the backup file
-    byte[] result = _pgDumpService.BackupDB("dbName", BackupFileFormat format); //Default is Plain(.sql file)
+    byte[] result = _pgDumpService.BackupDB("dbName", BackupFileFormat.Tar); //Default output format is Plain(.sql file)
   }
 }
 ```
