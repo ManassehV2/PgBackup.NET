@@ -7,18 +7,18 @@ Please refer https://www.postgresql.org/docs/current/libpq-pgpass.html for setti
 ## Installation Instructions
 Nuget package available (https://www.nuget.org/packages/PgBackup.Net/1.0.0)
 ```
-Install-Package PgBackup.Net -Version 1.0.0
+Install-Package PgBackup.Net -Version 1.1.0
 ```
 dotnet cli:
 ```
-dotnet add package PgBackup.Net --version=1.0.0
+dotnet add package PgBackup.Net --version=1.1.0
 ```
 # Package usage
 ## 1. Register the service in Startup.cs or Program.cs file
 ```
 services.AddPgBackupServices();
 ```
-## 2. call the BackupDB method with path string(the storage location of the backup tar file) 
+## 2. call the BackupDB method with path string(the storage location of the backup file) 
 ```
 using PgBackup.Services;
 public class myClass
@@ -31,7 +31,8 @@ public class myClass
   }
   public void TakeBackUp()
   {
-    _pgDumpService.BackupDB("/Users/minase/Documents/");
+    _pgDumpService.BackupDB("dbName", "/Users/Documents/", BackupFileFormat format); //Default is Plain(.sql file)
+    byte[] result = _pgDumpService.BackupDB("dbName", BackupFileFormat format); //Default is Plain(.sql file)
   }
 }
 ```
