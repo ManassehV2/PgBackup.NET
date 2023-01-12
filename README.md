@@ -1,13 +1,8 @@
-[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=ManassehV2_PgBackup.NET&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=ManassehV2_PgBackup.NET)
+[![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=ManassehV2_PgBackup.NET)](https://sonarcloud.io/summary/new_code?id=ManassehV2_PgBackup.NET)
 
-[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=ManassehV2_PgBackup.NET&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=ManassehV2_PgBackup.NET)
-
-[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=ManassehV2_PgBackup.NET&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=ManassehV2_PgBackup.NET)
-
-
-[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=ManassehV2_PgBackup.NET&metric=bugs)](https://sonarcloud.io/summary/new_code?id=ManassehV2_PgBackup.NET)
-
-
+ 
+ [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=ManassehV2_PgBackup.NET&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=ManassehV2_PgBackup.NET)
+          [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=ManassehV2_PgBackup.NET&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=ManassehV2_PgBackup.NET)    [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=ManassehV2_PgBackup.NET&metric=bugs)](https://sonarcloud.io/summary/new_code?id=ManassehV2_PgBackup.NET) 
 # PostgreSQL backup
 
 This package is a simple wrapper of postgresql's pg_dump client tool and can be used to take postgres database backups on demand from .NET core applications.
