@@ -10,6 +10,7 @@ Please refer https://www.postgresql.org/docs/current/libpq-pgpass.html for setti
 
 ## Installation Instructions
 Nuget package available (https://www.nuget.org/packages/PgBackup.Net/1.1.0)
+
 dotnet cli:
 ```
 dotnet add package PgBackup.Net --version=1.1.0
