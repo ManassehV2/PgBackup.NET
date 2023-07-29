@@ -6,6 +6,5 @@ namespace PgBackup.Enums
         Tar,
         Directory,
         Custom
-
     }
 }
